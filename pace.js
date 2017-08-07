@@ -1,5 +1,5 @@
 /* https://raw.githubusercontent.com/HubSpot/pace/v1.0.0/pace.min.js */
-/* <script src=""></script> */
+/* <script src="https://cdn.rawgit.com/ThePieMonster/Files/bd2fcbdc/pace.js"></script> */
 /*! pace 1.0.0 */
 (function() {
     var a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X = [].slice,
