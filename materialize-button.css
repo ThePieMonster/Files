@@ -6,6 +6,19 @@
  * <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/ThePieMonster/Files/e6487122/materialize-button.css">
  */
 
+footer,
+header,
+main,
+menu,
+nav,
+section,
+summary {
+    display: block
+}
+
+
+
+
 .red {
     background-color: #F44336 !important
 }
@@ -64,12 +77,14 @@ nav ul a {
     padding: 0 15px;
     cursor: pointer
 }
+nav ul a.btn,
 nav ul a.btn-large,
 nav ul a.btn-floating {
     margin-top: -2px;
     margin-left: 15px;
     margin-right: 15px
 }
+nav ul a.btn>.material-icons,
 nav ul a.btn>.material-icons,
 nav ul a.btn-large>.material-icons,
 nav ul a.btn-floating>.material-icons {
@@ -79,7 +94,9 @@ nav ul a.btn-floating>.material-icons {
 nav ul a:hover {
     background-color: rgba(0, 0, 0, 0.1)
 }
-.btn-large {
+.btn,
+.btn-large,
+.btn-flat {
     border: none;
     border-radius: 2px;
     display: inline-block;
@@ -88,9 +105,16 @@ nav ul a:hover {
     padding: 0 2rem;
     text-transform: uppercase;
     vertical-align: middle;
+
+    text-decoration: none;
+    color: #fff;
+    background-color: #26a69a;
+    text-align: center;
+    letter-spacing: .5px;
+
     -webkit-tap-highlight-color: transparent
 }
-
+.disabled.btn,
 .disabled.btn-large,
 .btn-floating.disabled,
 .btn-large.disabled,
@@ -107,7 +131,7 @@ nav ul a:hover {
     color: #9F9F9F !important;
     cursor: default
 }
-
+.disabled.btn:hover,
 .disabled.btn-large:hover,
 .btn-floating.disabled:hover,
 .btn-large.disabled:hover,
@@ -138,7 +162,7 @@ nav ul a:hover {
 .btn-floating:focus {
     background-color: #1d7d74
 }
-
+.btn,
 .btn-large {
     text-decoration: none;
     color: #fff;
@@ -149,9 +173,10 @@ nav ul a:hover {
     transition: .2s ease-out;
     cursor: pointer
 }
-
+.btn:hover,
 .btn-large:hover {
-    background-color: #2bbbad
+    color: #fff;
+    background-color: #2bbbad;
 }
 .btn-floating {
     display: inline-block;
@@ -208,11 +233,13 @@ button.btn-floating {
 }
 .z-depth-1,
 nav,
+.btn,
 .btn-large,
 .btn-floating {
     -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)
 }
+.btn,
 .btn-large:hover,
 .btn-floating:hover {
     -webkit-box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
@@ -319,3 +346,274 @@ nav,
     transform: scale(0)
 }
 
+
+
+.tap-target-wrapper {
+    width: 800px;
+    height: 800px;
+    position: fixed;
+    z-index: 1000;
+    visibility: hidden;
+    -webkit-transition: visibility 0s .3s;
+    transition: visibility 0s .3s
+}
+.tap-target-wrapper.open {
+    visibility: visible;
+    -webkit-transition: visibility 0s;
+    transition: visibility 0s
+}
+.tap-target-wrapper.open .tap-target {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: .95;
+    -webkit-transition: opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1), -webkit-transform 0.3s cubic-bezier(0.42, 0, 0.58, 1);
+    transition: opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1), -webkit-transform 0.3s cubic-bezier(0.42, 0, 0.58, 1);
+    transition: transform 0.3s cubic-bezier(0.42, 0, 0.58, 1), opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1);
+    transition: transform 0.3s cubic-bezier(0.42, 0, 0.58, 1), opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1), -webkit-transform 0.3s cubic-bezier(0.42, 0, 0.58, 1)
+}
+.tap-target-wrapper.open .tap-target-wave::before {
+    -webkit-transform: scale(1);
+    transform: scale(1)
+}
+.tap-target-wrapper.open .tap-target-wave::after {
+    visibility: visible;
+    -webkit-animation: pulse-animation 1s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    animation: pulse-animation 1s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    -webkit-transition: opacity .3s, visibility 0s 1s, -webkit-transform .3s;
+    transition: opacity .3s, visibility 0s 1s, -webkit-transform .3s;
+    transition: opacity .3s, transform .3s, visibility 0s 1s;
+    transition: opacity .3s, transform .3s, visibility 0s 1s, -webkit-transform .3s
+}
+.tap-target {
+    position: absolute;
+    font-size: 1rem;
+    border-radius: 50%;
+    background-color: #B2D7FF;
+    -webkit-box-shadow: 0 20px 20px 0 rgba(0, 0, 0, 0.14), 0 10px 50px 0 rgba(0, 0, 0, 0.12), 0 30px 10px -20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 20px 0 rgba(0, 0, 0, 0.14), 0 10px 50px 0 rgba(0, 0, 0, 0.12), 0 30px 10px -20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    -webkit-transition: opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1), -webkit-transform 0.3s cubic-bezier(0.42, 0, 0.58, 1);
+    transition: opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1), -webkit-transform 0.3s cubic-bezier(0.42, 0, 0.58, 1);
+    transition: transform 0.3s cubic-bezier(0.42, 0, 0.58, 1), opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1);
+    transition: transform 0.3s cubic-bezier(0.42, 0, 0.58, 1), opacity 0.3s cubic-bezier(0.42, 0, 0.58, 1), -webkit-transform 0.3s cubic-bezier(0.42, 0, 0.58, 1)
+}
+.tap-target-content {
+    position: relative;
+    display: table-cell
+}
+.tap-target-wave {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 10001
+}
+.tap-target-wave::before,
+.tap-target-wave::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #ffffff
+}
+.tap-target-wave::before {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    -webkit-transition: -webkit-transform .3s;
+    transition: -webkit-transform .3s;
+    transition: transform .3s;
+    transition: transform .3s, -webkit-transform .3s
+}
+.tap-target-wave::after {
+    visibility: hidden;
+    -webkit-transition: opacity .3s, visibility 0s, -webkit-transform .3s;
+    transition: opacity .3s, visibility 0s, -webkit-transform .3s;
+    transition: opacity .3s, transform .3s, visibility 0s;
+    transition: opacity .3s, transform .3s, visibility 0s, -webkit-transform .3s;
+    z-index: -1
+}
+.tap-target-origin {
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    z-index: 10002;
+    position: absolute !important
+}
+.tap-target-origin:not(.btn):not(.btn-large),
+.tap-target-origin:not(.btn):not(.btn-large):hover {
+    background: none
+}
+@media only screen and (max-width: 600px) {
+    .tap-target,
+    .tap-target-wrapper {
+        width: 600px;
+        height: 600px
+    }
+}
+
+.tap-target-content h5 {
+    font-size: 3.00rem;
+    line-height: 110%;
+    margin: 1rem 0 1rem 0;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+}
+.tap-target-content p {
+    font-size: 2.00rem;
+    line-height: 110%;
+    margin: 1rem 0 1rem 0;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+}
+.tap-target-content i {
+    font-size: 2rem;
+}
+
+
+/*!
+ * Waves v0.6.0
+ * http://fian.my.id/Waves
+ *
+ * Copyright 2014 Alfiana E. Sibuea and other contributors
+ * Released under the MIT license
+ * https://github.com/fians/Waves/blob/master/LICENSE
+ */
+
+.waves-effect {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    vertical-align: middle;
+    z-index: 1;
+    -webkit-transition: .3s ease-out;
+    transition: .3s ease-out
+}
+.waves-effect .waves-ripple {
+    position: absolute;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.2);
+    -webkit-transition: all 0.7s ease-out;
+    transition: all 0.7s ease-out;
+    -webkit-transition-property: opacity, -webkit-transform;
+    transition-property: opacity, -webkit-transform;
+    transition-property: transform, opacity;
+    transition-property: transform, opacity, -webkit-transform;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    pointer-events: none
+}
+.waves-effect.waves-light .waves-ripple {
+    background-color: rgba(255, 255, 255, 0.45)
+}
+.waves-effect.waves-red .waves-ripple {
+    background-color: rgba(244, 67, 54, 0.7)
+}
+.waves-effect.waves-yellow .waves-ripple {
+    background-color: rgba(255, 235, 59, 0.7)
+}
+.waves-effect.waves-orange .waves-ripple {
+    background-color: rgba(255, 152, 0, 0.7)
+}
+.waves-effect.waves-purple .waves-ripple {
+    background-color: rgba(156, 39, 176, 0.7)
+}
+.waves-effect.waves-green .waves-ripple {
+    background-color: rgba(76, 175, 80, 0.7)
+}
+.waves-effect.waves-teal .waves-ripple {
+    background-color: rgba(0, 150, 136, 0.7)
+}
+.waves-effect input[type="button"],
+.waves-effect input[type="reset"],
+.waves-effect input[type="submit"] {
+    border: 0;
+    font-style: normal;
+    font-size: inherit;
+    text-transform: inherit;
+    background: none
+}
+.waves-effect img {
+    position: relative;
+    z-index: -1
+}
+.waves-notransition {
+    -webkit-transition: none !important;
+    transition: none !important
+}
+.waves-circle {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%)
+}
+.waves-input-wrapper {
+    border-radius: 0.2em;
+    vertical-align: bottom
+}
+.waves-input-wrapper .waves-button-input {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 1
+}
+.waves-circle {
+    text-align: center;
+    width: 2.5em;
+    height: 2.5em;
+    line-height: 2.5em;
+    border-radius: 50%;
+    -webkit-mask-image: none
+}
+.waves-block {
+    display: block
+}
+.waves-effect .waves-ripple {
+    z-index: -1
+}
+
+
+
+
+
+
+
+
+
+.page-footer {
+    padding-top: 20px;
+    color: #fff;
+    background-color: #ee6e73
+}
+.page-footer .footer-copyright {
+    overflow: hidden;
+    min-height: 50px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 10px 0px;
+    color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(51, 51, 51, 0.08)
+}
+.page-footer .footer-copyright {
+    font-weight: 300
+}
