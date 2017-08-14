@@ -488,13 +488,13 @@ nav,
     and (min-device-width : 320px) 
     and (max-device-width : 480px) {
         .tap-target-content h5 {
-            font-size: 1.00rem;
+            font-size: 2.25rem;
         }
         .tap-target-content p {
-            font-size: 0.65rem;
+            font-size: 1.25rem;
         }
         .tap-target-content i {
-            font-size: 0.65rem;
+            font-size: 1.25rem;
         }
     }
 /* Tablet */
@@ -502,13 +502,13 @@ nav,
     and (min-device-width : 768px) 
     and (max-device-width : 1024px) {
         .tap-target-content h5 {
-            font-size: 1.50rem;
+            font-size: 2.75rem;
         }
         .tap-target-content p {
-            font-size: 1.00rem;
+            font-size: 1.75rem;
         }
         .tap-target-content i {
-            font-size: 1.00rem;
+            font-size: 1.75rem;
         }
     }
 
