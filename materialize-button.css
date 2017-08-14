@@ -459,20 +459,58 @@ nav,
 .tap-target-content h5 {
     font-size: 3.00rem;
     line-height: 110%;
-    margin: 1rem 0 1rem 0;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    margin-left: 0rem;
+    margin-right: 0rem;
     color: white;
     -webkit-font-smoothing: antialiased;
 }
 .tap-target-content p {
     font-size: 2.00rem;
     line-height: 110%;
-    margin: 1rem 0 1rem 0;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    margin-left: 0rem;
+    margin-right: 0rem;
     color: white;
     -webkit-font-smoothing: antialiased;
 }
 .tap-target-content i {
     font-size: 2rem;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    margin-left: 0rem;
+    margin-right: 0rem;
 }
+/* Smartphone */
+@media only screen
+    and (min-device-width : 320px) 
+    and (max-device-width : 480px) {
+        .tap-target-content h5 {
+            font-size: 1.00rem;
+        }
+        .tap-target-content p {
+            font-size: 0.65rem;
+        }
+        .tap-target-content i {
+            font-size: 0.65rem;
+        }
+    }
+/* Tablet */
+@media only screen
+    and (min-device-width : 768px) 
+    and (max-device-width : 1024px) {
+        .tap-target-content h5 {
+            font-size: 1.50rem;
+        }
+        .tap-target-content p {
+            font-size: 1.00rem;
+        }
+        .tap-target-content i {
+            font-size: 1.00rem;
+        }
+    }
 
 
 /*!
