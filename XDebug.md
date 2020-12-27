@@ -29,7 +29,7 @@ https://xdebug.org/wizard
 Copy the DLL file to the proper location
 
 Edit the php.ini file and paste the following at the bottom
-```php
+```ini
     output_buffering = Off
     ; set the extension path
     zend_extension = "C:\xampp\php\ext\php_xdebug-3.0.1-7.3-vc15-x86_64.dll"
