@@ -43,3 +43,5 @@ Edit the php.ini file and paste the following at the bottom
     xdebug.client_port=9000
     xdebug.mode=debug
 ```
+
+Using the XAMPP Control panel, restart the Apache service
