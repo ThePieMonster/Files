@@ -1,7 +1,7 @@
 Follow the below guide for installing the Visual Studio Code extension "PHP Debug"
 https://stackify.com/php-debugging-guide/
 
-Create a test site in XAMPP and create a indix.php file with the below code
+Create a test site in XAMPP and create a index.php file with the below code
 ```php
 <?php
 	phpinfo();
@@ -29,6 +29,7 @@ https://xdebug.org/wizard
 Copy the DLL file to the proper location
 
 Edit the php.ini file and paste the following at the bottom
+```php
     output_buffering = Off
     ; set the extension path
     zend_extension = "C:\xampp\php\ext\php_xdebug-3.0.1-7.3-vc15-x86_64.dll"
@@ -41,3 +42,4 @@ Edit the php.ini file and paste the following at the bottom
     # This should match your xdebug.remote_port
     xdebug.client_port=9000
     xdebug.mode=debug
+```
