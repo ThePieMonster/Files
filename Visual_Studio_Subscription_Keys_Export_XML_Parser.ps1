@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Parses the Visual Studio Subscription Keys Export XML File
 
@@ -13,7 +13,7 @@
 #>
 
 param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$true)]
     [String] $XMLFile
 )
 $ErrorActionPreference = "Stop"
@@ -32,28 +32,42 @@ $csvArray = @()
 foreach($item in $xml1) {
     $name = $item.Name
     $key = $item.Key.'#text'
-
+    
     # Re-write keys that have more than one key
-    $keyType = $key.GetType()
-    if($keyType.BaseType.Name -eq "Array") {
-        foreach($k in $key) {
+    Try {
+        $keyType = $key.GetType()
+        if($keyType.BaseType.Name -eq "Array") {
+            foreach($k in $key) {
+                $csvItemObject = $null
+                $csvItemObject = New-Object PSObject
+                $csvItemObject | Add-Member -MemberType NoteProperty -Name "Name" -Value $name
+                $csvItemObject | Add-Member -MemberType NoteProperty -Name "Key" -Value $k
+                $csvArray += $csvItemObject
+            }
+        } else {
             $csvItemObject = $null
             $csvItemObject = New-Object PSObject
             $csvItemObject | Add-Member -MemberType NoteProperty -Name "Name" -Value $name
-            $csvItemObject | Add-Member -MemberType NoteProperty -Name "Key" -Value $k
+            $csvItemObject | Add-Member -MemberType NoteProperty -Name "Key" -Value $key
             $csvArray += $csvItemObject
         }
-    } else {
-        $csvItemObject = $null
-        $csvItemObject = New-Object PSObject
-        $csvItemObject | Add-Member -MemberType NoteProperty -Name "Name" -Value $name
-        $csvItemObject | Add-Member -MemberType NoteProperty -Name "Key" -Value $key
-        $csvArray += $csvItemObject
+        #if($name -like "*Windows 11*") { Write-Host $name "-" $key ; pause }
+    }
+    Catch {
+        $exception = $_.Exception
+        
+        if ($exception -like "*You cannot call a method on a null-valued expression*") {
+            Write-Host "Key was not found:" $name
+        } else {
+            Write-Error "$exception"
+        }
     }
 }
 
 # Remove duplicates
-$csvArray2 = $csvArray | Sort-Object -Property Key -Unique
+$csvArray2 = $csvArray | Sort-Object -Property Name,Key -Unique
 
 # Export CSV
-$csvArray2 | Select-Object -Property Name,Key | Export-Csv -Path $XMLFile.Replace("\KeysExport.xml","\KeysExport.csv") -NoTypeInformation
+$exportPath = $XMLFile.Replace("\KeysExport.xml","\KeysExport.csv")
+$csvArray2 | Select-Object -Property Name,Key | Export-Csv -Path $exportPath -NoTypeInformation
+Write-Host "File exported to $exportPath"
