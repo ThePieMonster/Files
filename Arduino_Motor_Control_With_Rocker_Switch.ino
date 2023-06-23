@@ -14,8 +14,8 @@ int pwmPin = 3;
 
 // set bool motorOn
 bool motorOn = false;
-// define motorDirOld
-char motorDirOld;
+// set char motorDirOld
+char motorDirOld = false;
 
 
 void setup() {
@@ -56,13 +56,13 @@ void loop() {
   // switch forward
   if(voltageA0 > 1) {
     Serial.println("Motor forward");
-    motorOn = directionChannelA(motorOn, "HIGH");
+    motorOn = directionChannelA(motorOn, HIGH);
   }
   
   // switch backwards
   if(voltageA1 > 1) {
     Serial.println("Motor backwards");
-    motorOn = directionChannelA(motorOn, "LOW");
+    motorOn = directionChannelA(motorOn, LOW);
   }
   
   // switch middle
@@ -95,7 +95,7 @@ bool directionChannelA(bool motorOn, char motorDir) {
   // if the motor switch is changed from one direction to the other to fast, the brake will trigger
   if(motorOn == true and motorDir != motorDirOld) {
     Serial.println("* Motor direction change to fast *");
-    brakeChannelA();
+    motorOn = brakeChannelA();
   }
 
   // slowly spin up the motor on Channel A if the motor was off
@@ -110,4 +110,7 @@ bool directionChannelA(bool motorOn, char motorDir) {
     analogWrite(pwmPin, 255);
     return true;
   }
+
+  // motor is already on at this point
+  return true;
 }
