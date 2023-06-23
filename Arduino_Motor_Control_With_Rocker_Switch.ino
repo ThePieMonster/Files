@@ -1,6 +1,6 @@
 // Notes
 // - Serial Monitor is located in the top right of the Arduino IDE
-// - Nothing is plugged into the Channel A and B pins deffinied below, those pins are routed via the MotorShield PCB Traces to the motor controls
+// - Nothing is plugged into the Channel A and B pins definied below, those pins are routed via the MotorShield PCB traces to the motor controls
 
 // channel A motor
 int directionPin = 12;
@@ -14,6 +14,7 @@ int pwmPin = 3;
 
 // set bool motorOn
 bool motorOn = false;
+// define motorDirOld
 char motorDirOld;
 
 
