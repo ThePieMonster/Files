@@ -21,13 +21,17 @@ char motorDirOld = false;
 void setup() {
   // put your setup code here, to run once
 
-  //define pins
+  // define pins
   pinMode(directionPin, OUTPUT);
   pinMode(pwmPin, OUTPUT);
   pinMode(brakePin, OUTPUT);
 
   pinMode(A0, INPUT); // not necessary since all pins start as input
-  pinMode(A1, INPUT); // not necessary since all pins start as input 
+  pinMode(A1, INPUT); // not necessary since all pins start as input
+  pinMode(A2, INPUT); // not necessary since all pins start as input
+  pinMode(A3, INPUT); // not necessary since all pins start as input 
+  pinMode(A4, INPUT); // not necessary since all pins start as input
+  pinMode(A5, INPUT); // not necessary since all pins start as input 
 
   Serial.begin(9600);
   Serial.println("Starting program...");
@@ -57,12 +61,16 @@ void loop() {
   if(voltageA0 > 1) {
     Serial.println("Motor forward");
     motorOn = directionChannelA(motorOn, HIGH);
+    // open blast gate
+     pinMode(A5, OUTPUT);
   }
   
   // switch backwards
   if(voltageA1 > 1) {
     Serial.println("Motor backwards");
     motorOn = directionChannelA(motorOn, LOW);
+    // close blast gate
+    pinMode(A5, INPUT);
   }
   
   // switch middle
