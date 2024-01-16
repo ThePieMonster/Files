@@ -8,7 +8,6 @@ G1 Y265 F3000
 
 G1 X65 Y245 F12000
 G1 Y265 F3000
-M141 S0 ; turn off chamber 
 M140 S0 ; turn off bed
 M106 S0 ; turn off fan
 M106 P2 S0 ; turn off remote part cooling fan

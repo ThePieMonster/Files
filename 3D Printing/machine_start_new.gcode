@@ -1,9 +1,8 @@
-;===== machine: X1E =========================
-;===== date: 20230815 =====================
+;===== machine: X1 =========================
+;===== date: 20230707 =====================
 ;===== turn on the HB fan =================
 M104 S75 ;set extruder temp to turn on the HB fan and prevent filament oozing from nozzle
 ;===== reset machine status =================
-M290 X40 Y40 Z2.6666666
 G91
 M17 Z0.4 ; lower the z-motor current
 G380 S2 Z30 F300 ; G380 is same as G38; lower the hotbed , to prevent the nozzle is below the hotbed
@@ -20,24 +19,6 @@ M1002 set_gcode_claim_speed_level : 5
 M221 X0 Y0 Z0 ; turn off soft endstop to prevent protential logic problem
 G29.1 Z{+0.0} ; clear z-trim value first
 M204 S10000 ; init ACC set to 10m/s^2
-
-;==== if Chamber Cooling is necessary ==== 
-
-{if (filament_type[initial_no_support_extruder]=="PLA") || (filament_type[initial_no_support_extruder]=="PETG") || (filament_type[initial_no_support_extruder]=="TPU") || (filament_type[initial_no_support_extruder]=="PVA") || (filament_type[initial_no_support_extruder]=="PLA-CF") || (filament_type[initial_no_support_extruder]=="PETG-CF")}
-M1002 gcode_claim_action : 29
-G28
-G90
-G1 X60 F12000
-G1 Y245
-G1 Y265 F3000
-G1 Z200
-M140 S0 ; stop heatbed from heating
-M106 P2 S255 ; open auxiliary fan for cooling
-M106 P3 S255 ; open chamber fan for cooling
-M191 S0 ; wait for chamber temp
-M106 P3 S0 ; reset chamber fan cmd
-M106 P2 S0; reset auxiliary fan cmd
-{endif}
 
 ;===== heatbed preheat ====================
 M1002 gcode_claim_action : 2
@@ -83,10 +64,9 @@ M620 S[initial_no_support_extruder]A   ; switch material if AMS exist
 M621 S[initial_no_support_extruder]A
 M620.1 E F{filament_max_volumetric_speed[initial_no_support_extruder]/2.4053*60} T{nozzle_temperature_range_high[initial_no_support_extruder]}
 
-
 M412 S1 ; ===turn on filament runout detection===
 
-M109 S290 ;set nozzle to common flush temp
+M109 S250 ;set nozzle to common flush temp
 M106 P1 S0
 G92 E0
 G1 E50 F200
@@ -116,13 +96,6 @@ G1 X80 F15000
 G1 X165 F15000; wipe and shake
 M400
 M106 P1 S0
-
-;===== set chamber temperature ==========
-{if (overall_chamber_temperature >= 40)}
-M106 P2 S255 ; open big fan to help heating
-M141 S[overall_chamber_temperature] ; Let Chamber begin to heat
-{endif}
-
 ;===== prepare print temperature and material end =====
 
 
@@ -288,17 +261,16 @@ M975 S1
 G90
 M83
 T1000
-G1 X18.0 Y0.5 Z0.8 F18000;Move to start position
+G1 X18.0 Y1.0 Z0.8 F18000;Move to start position
 M109 S{nozzle_temperature[initial_no_support_extruder]}
 G1 Z0.2
 G0 E2 F300
-G0 X129 E15 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-G0 X240 E15
-G0 Y11 E1.364 F{outer_wall_volumetric_speed/(0.3*1.0)/ 4 * 60}
+G0 X240 E15 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+G0 Y11 E0.700 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
 G0 X239.5
-G0 E0.3
-G0 Y1.5 E1.300
-G0 X231 E1.160 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+G0 E0.2
+G0 Y1.5 E0.700
+G0 X231 E0.700 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
 M400
 
 ;===== for Textured PEI Plate , lower the nozzle as the nozzle was touching topmost of the texture when homing ==
@@ -313,15 +285,17 @@ M622 J1
 
     M1002 gcode_claim_action : 8
 
-    G0 F1200.0 X231 Y15   Z0.2 E1.482
-    G0 F1200.0 X226 Y15   Z0.2 E0.550
-    G0 F1200.0 X226 Y8    Z0.2 E0.768
-    G0 F1200.0 X216 Y8    Z0.2 E1.098
-    G0 F1200.0 X216 Y1.5  Z0.2 E0.714
+    T1000
 
-    G0 X48.0 E25.0 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
-    G0 X48.0 Y14 E1.70 F1200.0
-    G0 X35.0 Y6.0 E1.90 F1200.0
+    G0 F1200.0 X231 Y15   Z0.2 E0.741
+    G0 F1200.0 X226 Y15   Z0.2 E0.275
+    G0 F1200.0 X226 Y8    Z0.2 E0.384
+    G0 F1200.0 X216 Y8    Z0.2 E0.549
+    G0 F1200.0 X216 Y1.5  Z0.2 E0.357
+
+    G0 X48.0 E12.0 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+    G0 X48.0 Y14 E0.92 F1200.0
+    G0 X35.0 Y6.0 E1.03 F1200.0
 
     ;=========== extruder cali extrusion ==================
     T1000
@@ -336,42 +310,41 @@ M622 J1
     G0 X35.000 Y6.000 Z0.300 F30000 E0
     G1 F1500.000 E0.800
     M106 S0 ; turn off fan
-    G0 X110.000 E9.35441 F4800
-    G0 X185.000 E9.35441 F4800
+    G0 X185.000 E9.35441 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
     G0 X187 Z0
     G1 F1500.000 E-0.800
     G0 Z1
     G0 X180 Z0.3 F18000
 
     M900 L1000.0 M1.0
-    M900 K0.020
+    M900 K0.040
     G0 X45.000 F30000
     G0 Y8.000 F30000
     G1 F1500.000 E0.800
-    G1 X65.000  E2.4945 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X70.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X75.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X80.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X85.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X90.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X95.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X100.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X105.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X110.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X115.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X120.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X125.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X130.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X135.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X140.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X145.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X150.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X155.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X160.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X165.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X170.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X175.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X180.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
+    G1 X65.000 E1.24726 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X70.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X75.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X80.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X85.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X90.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X95.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X100.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X105.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X110.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X115.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X120.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X125.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X130.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X135.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X140.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X145.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X150.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X155.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X160.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X165.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X170.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X175.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X180.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
     G1 F1500.000 E-0.800
     G1 X183 Z0.15 F30000
     G1 X185
@@ -381,34 +354,34 @@ M622 J1
     M400
 
     G0 X45.000 F30000
-    M900 K0.010
+    M900 K0.020
     G0 X45.000 F30000
     G0 Y10.000 F30000
     G1 F1500.000 E0.800
-    G1 X65.000  E2.4945 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X70.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X75.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X80.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X85.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X90.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X95.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X100.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X105.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X110.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X115.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X120.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X125.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X130.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X135.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X140.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X145.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X150.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X155.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X160.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X165.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X170.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X175.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X180.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
+    G1 X65.000 E1.24726 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X70.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X75.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X80.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X85.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X90.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X95.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X100.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X105.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X110.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X115.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X120.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X125.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X130.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X135.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X140.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X145.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X150.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X155.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X160.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X165.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X170.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X175.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X180.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
     G1 F1500.000 E-0.800
     G1 X183 Z0.15 F30000
     G1 X185
@@ -422,30 +395,30 @@ M622 J1
     G0 X45.000 F30000
     G0 Y12.000 F30000
     G1 F1500.000 E0.800
-    G1 X65.000  E2.4945 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X70.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X75.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X80.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X85.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X90.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X95.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X100.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X105.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X110.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X115.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X120.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X125.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X130.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X135.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X140.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X145.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X150.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X155.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X160.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X165.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X170.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X175.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X180.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
+    G1 X65.000 E1.24726 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X70.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X75.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X80.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X85.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X90.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X95.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X100.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X105.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X110.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X115.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X120.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X125.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X130.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X135.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X140.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X145.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X150.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X155.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X160.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X165.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X170.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X175.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X180.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
     G1 F1500.000 E-0.800
     G1 X183 Z0.15 F30000
     G1 X185
@@ -457,11 +430,11 @@ M622 J1
 
 M623 ; end of "draw extrinsic para cali paint"
 
+
 M1002 judge_flag extrude_cali_flag
 M622 J0
     G0 X231 Y1.5 F30000
-    G0 X129 E14 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G0 X18 E15 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+    G0 X18 E14.3 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
 M623
 
 M104 S140
@@ -575,7 +548,7 @@ M622 J1
     M400
     M500 ; save cali data
 
-    M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]} ; rise nozzle temp now ,to reduce temp waiting time.
+    M104 S{nozzle_temperature[initial_no_support_extruder]} ; rise nozzle temp now ,to reduce temp waiting time.
 
     T1100
     M400 P400
@@ -587,7 +560,7 @@ M622 J1
 
     M969 S1 N3 A2000
     G0 F360.000 X181.000 Z0.000
-    M980.3 A70.000 B{outer_wall_volumetric_speed/(1.75*1.75/4*3.14)*60/4} C5.000 D{outer_wall_volumetric_speed/(1.75*1.75/4*3.14)*60} E5.000 F175.000 H1.000 I0.000 J0.010 K0.020
+    M980.3 A70.000 B{outer_wall_volumetric_speed/(1.75*1.75/4*3.14)*60/4} C5.000 D{outer_wall_volumetric_speed/(1.75*1.75/4*3.14)*60} E5.000 F175.000 H1.000 I0.000 J0.020 K0.040
     M400 P100
     G0 F20000
     G0 Z1 ; rise nozzle up
@@ -600,59 +573,53 @@ M622 J1
     G1 Z2 F20000
     T1000
     G0 X45.000 Y4.000 F30000 E0
-    M109 S{nozzle_temperature_initial_layer[initial_no_support_extruder]}
+    M109 S{nozzle_temperature[initial_no_support_extruder]}
     G0 Z0.3
     G1 F1500.000 E3.600
-    G1 X65.000  E2.4945 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X70.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X75.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X80.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X85.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X90.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X95.000  E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X100.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X105.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X110.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X115.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X120.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X125.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X130.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X135.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
+    G1 X65.000 E1.24726 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X70.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X75.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X80.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X85.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X90.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X95.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X100.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X105.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X110.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X115.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X120.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X125.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X130.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X135.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
 
     ; see if extrude cali success, if not ,use default value
     M1002 judge_last_extrude_cali_success
     M622 J0
         M400
-        M900 K0.01 M{outer_wall_volumetric_speed/(1.75*1.75/4*3.14) *0.01}
+        M900 K0.02 M{outer_wall_volumetric_speed/(1.75*1.75/4*3.14)*0.02}
     M623
 
-    G1 X140.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X145.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X150.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X155.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X160.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X165.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X170.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X175.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X180.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X185.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X190.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X195.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X200.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X205.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X210.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X215.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
-    G1 X220.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0) / 4 * 60}
-    G1 X225.000 E0.6236 F{outer_wall_volumetric_speed/(0.3*1.0)     * 60}
+    G1 X140.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X145.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X150.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X155.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X160.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X165.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X170.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X175.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X180.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X185.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X190.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X195.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X200.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X205.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X210.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X215.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
+    G1 X220.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}
+    G1 X225.000 E0.31181 F{outer_wall_volumetric_speed/(0.3*0.5)    * 60}
     M973 S4
 
 M623
-
-;===== wait chamber temperature reaching the reference value =======
-{if (overall_chamber_temperature >= 40)}
-M191 S[overall_chamber_temperature] ; wait for chamber temp
-M106 P2 S0 ; reset chamber fan cmd
-{endif}
 
 ;========turn off light and wait extrude temperature =============
 M1002 gcode_claim_action : 0

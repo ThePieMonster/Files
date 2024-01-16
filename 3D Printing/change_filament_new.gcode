@@ -47,7 +47,11 @@ G92 E0
 ; FLUSH_START
 ; always use highest temperature to flush
 M400
+{if filament_type[next_extruder] == "PETG"}
+M109 S220
+{else}
 M109 S[nozzle_temperature_range_high]
+{endif}
 {if flush_length_1 > 23.7}
 G1 E23.7 F{old_filament_e_feedrate} ; do not need pulsatile flushing for start part
 G1 E{(flush_length_1 - 23.7) * 0.02} F50
@@ -63,6 +67,29 @@ G1 E{flush_length_1} F{old_filament_e_feedrate}
 {endif}
 ; FLUSH_END
 G1 E-[old_retract_length_toolchange] F1800
+{if (flush_length_2 > 1) && (filament_type[next_extruder]=="PLA-CF" || filament_type[next_extruder]=="PETG")}
+M106 P1 S255
+M400 S3
+M106 P1 S0
+G1 X80 F15000
+G1 X60 F15000
+G1 X80 F15000
+G1 X60 F15000; shake to put down garbage
+
+G1 X70 F5000
+G1 X90 F3000
+G1 Y255 F4000
+G1 X100 F5000
+G1 Y265 F5000
+G1 X70 F10000
+G1 X100 F5000
+G1 X70 F10000
+G1 X100 F5000
+G1 X165 F15000; wipe and shake
+G1 Y245 F21000
+G1 X65 
+G1 Y265 F3000
+{endif}
 G1 E[old_retract_length_toolchange] F300
 {endif}
 
@@ -80,6 +107,29 @@ G1 E{flush_length_2 * 0.18} F{new_filament_e_feedrate}
 G1 E{flush_length_2 * 0.02} F50
 ; FLUSH_END
 G1 E-[new_retract_length_toolchange] F1800
+{if (flush_length_3 > 1) && (filament_type[next_extruder]=="PLA-CF" || filament_type[next_extruder]=="PETG")}
+M106 P1 S255
+M400 S3
+M106 P1 S0
+G1 X80 F15000
+G1 X60 F15000
+G1 X80 F15000
+G1 X60 F15000; shake to put down garbage
+
+G1 X70 F5000
+G1 X90 F3000
+G1 Y255 F4000
+G1 X100 F5000
+G1 Y265 F5000
+G1 X70 F10000
+G1 X100 F5000
+G1 X70 F10000
+G1 X100 F5000
+G1 X165 F15000; wipe and shake
+G1 Y245 F21000
+G1 X65 
+G1 Y265 F3000
+{endif}
 G1 E[new_retract_length_toolchange] F300
 {endif}
 
@@ -97,6 +147,29 @@ G1 E{flush_length_3 * 0.18} F{new_filament_e_feedrate}
 G1 E{flush_length_3 * 0.02} F50
 ; FLUSH_END
 G1 E-[new_retract_length_toolchange] F1800
+{if (flush_length_4 > 1) && (filament_type[next_extruder]=="PLA-CF" || filament_type[next_extruder]=="PETG")}
+M106 P1 S255
+M400 S3
+M106 P1 S0
+G1 X80 F15000
+G1 X60 F15000
+G1 X80 F15000
+G1 X60 F15000; shake to put down garbage
+
+G1 X70 F5000
+G1 X90 F3000
+G1 Y255 F4000
+G1 X100 F5000
+G1 Y265 F5000
+G1 X70 F10000
+G1 X100 F5000
+G1 X70 F10000
+G1 X100 F5000
+G1 X165 F15000; wipe and shake
+G1 Y245 F21000
+G1 X65 
+G1 Y265 F3000
+{endif}
 G1 E[new_retract_length_toolchange] F300
 {endif}
 
