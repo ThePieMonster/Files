@@ -8,12 +8,17 @@ G1 Y265 F3000
 
 G1 X65 Y245 F12000
 G1 Y265 F3000
+M141 S0 ; turn off chamber 
 M140 S0 ; turn off bed
 M106 S0 ; turn off fan
 M106 P2 S0 ; turn off remote part cooling fan
 M106 P3 S0 ; turn off chamber cooling fan
 
 G1 X100 F12000 ; wipe
+
+G1 E-20 F200   ; Filament is pushed out 20 mm. 
+M400           ; Waits until pushing out is completed before doing anything else.  
+
 ; pull back filament to AMS
 M620 S255
 G1 X20 Y50 F12000

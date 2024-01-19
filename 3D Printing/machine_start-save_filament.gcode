@@ -70,6 +70,9 @@ M109 S250 ;set nozzle to common flush temp
 M106 P1 S0
 G92 E0
 G1 E50 F200
+
+G1 E20 F200 ; Extrude another 20 mm so that the calculated waste amounts in bambu studio are accurate.
+
 M400
 M104 S[nozzle_temperature_initial_layer]
 G92 E0
