@@ -15,16 +15,16 @@ jobs:
       
       - name: Get Next Version
         uses: reecetech/version-increment@2023.9.3
-        id: version
+        id: version_increment
         with:
           scheme: semver
           increment: patch
 
       - name: Tag Version To Use
-        run: echo "${{ steps.previous_step.outputs.version }}"
+        run: echo "${{ steps.version_increment.outputs.version }}"
 
       - name: Auto Tag
         uses: Klemensas/action-autotag@stable
         with:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          version: "${{ steps.previous_step.outputs.version }}"
+          version: "${{ steps.version_increment.outputs.version }}"
