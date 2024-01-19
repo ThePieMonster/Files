@@ -20,6 +20,9 @@ jobs:
           scheme: semver
           increment: patch
 
+      - name: Tag Version To Use
+        run: echo "${{ steps.previous_step.outputs.version }}"
+
       - name: Auto Tag
         uses: Klemensas/action-autotag@stable
         with:
