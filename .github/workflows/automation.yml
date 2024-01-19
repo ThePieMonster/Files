@@ -25,6 +25,7 @@ jobs:
 
       - name: Auto Tag
         uses: butlerlogic/action-autotag@1.0.0
-        with:
+        env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
           version: "${{ steps.version_increment.outputs.version }}"
