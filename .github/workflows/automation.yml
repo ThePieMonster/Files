@@ -24,7 +24,7 @@ jobs:
         run: echo "${{ steps.version_increment.outputs.version }}"
 
       - name: Auto Tag
-        uses: butlerlogic/action-autotag@1.0.0
+        uses: butlerlogic/action-autotag@1.1.2
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
