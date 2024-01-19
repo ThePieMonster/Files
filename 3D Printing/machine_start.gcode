@@ -66,13 +66,10 @@ M620.1 E F{filament_max_volumetric_speed[initial_no_support_extruder]/2.4053*60}
 
 M412 S1 ; ===turn on filament runout detection===
 
-M109 S290 ;set nozzle to common flush temp
+M109 S250 ;set nozzle to common flush temp
 M106 P1 S0
 G92 E0
 G1 E50 F200
-
-G1 E20 F200 ; Extrude another 20 mm so that the calculated waste amounts in bambu studio are accurate.
-
 M400
 M104 S[nozzle_temperature_initial_layer]
 G92 E0
@@ -621,29 +618,12 @@ M622 J1
 
 M623
 
-;===== wait chamber temperature reaching the reference value =======
-;{if (overall_chamber_temperature >= 40)}
-;M191 S[overall_chamber_temperature] ; wait for chamber temp
-;M106 P2 S0 ; reset chamber fan cmd
-;{endif}
-
-;===== HEAT SOAK ===== X1E Required To Use Code M191
-;{if (filament_type[initial_tool]=="ASA") || (filament_type[initial_tool]=="PA-CF") || (filament_type[initial_tool]=="ABS") }
-;    ;M190 S110 ; wait for bed temp at 110ºc - this seems to overwrite the bed temp setting from the UI
-;    M106 P2 S255 ; turn ON aux fan at full speed
-;    M106 P3 S0 ; turn OFF chamber fan
-;    M191 R50 ; wait until chamber has reached 50ºC
-;    M106 P2 S0 ; turn OFF aux fan
-;	;M190 S[bed_temperature_initial_layer_single] ; set and wait for bed temp to get back to initial layer setting
-;{endif}
-
 ;========turn off light and wait extrude temperature =============
 M1002 gcode_claim_action : 0
 M973 S4 ; turn off scanner
 M400 ; wait all motion done before implement the emprical L parameters
 ;M900 L500.0 ; Empirical parameters
 M109 S[nozzle_temperature_initial_layer]
-M960 S5 P0 ; turn off logo led
 M960 S1 P0 ; turn off laser
 M960 S2 P0 ; turn off laser
 M106 S0 ; turn off fan
