@@ -1,5 +1,6 @@
 {
   "name": "example-package",
   "version": "1.0.0",
-  "author": "Your Name <email@example.com>"
+  "author": "Your Name <email@example.com>",
+  "description": "dummy package for git actions"
 }
