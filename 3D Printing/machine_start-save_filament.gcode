@@ -621,12 +621,23 @@ M622 J1
 
 M623
 
+;===== HEAT SOAK ===== X1E Required To Use Code M191
+;{if (filament_type[initial_tool]=="ASA") || (filament_type[initial_tool]=="PA-CF") || (filament_type[initial_tool]=="ABS") }
+;    ;M190 S110 ; wait for bed temp at 110ºc - this seems to overwrite the bed temp setting from the UI
+;    M106 P2 S255 ; turn ON aux fan at full speed
+;    M106 P3 S0 ; turn OFF chamber fan
+;    M191 R50 ; wait until chamber has reached 50ºC
+;    M106 P2 S0 ; turn OFF aux fan
+;	;M190 S[bed_temperature_initial_layer_single] ; set and wait for bed temp to get back to initial layer setting
+;{endif}
+
 ;========turn off light and wait extrude temperature =============
 M1002 gcode_claim_action : 0
 M973 S4 ; turn off scanner
 M400 ; wait all motion done before implement the emprical L parameters
 ;M900 L500.0 ; Empirical parameters
 M109 S[nozzle_temperature_initial_layer]
+M960 S5 P0 ; turn off logo led
 M960 S1 P0 ; turn off laser
 M960 S2 P0 ; turn off laser
 M106 S0 ; turn off fan
