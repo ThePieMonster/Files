@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Config Converter</title>
+<style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .container:last-child {
+      margin-bottom: 0;
+    }
+    h2 {
+      color: #333;
+    }
+    .file-upload {
+      margin-top: 10px;
+      margin-bottom: 20px; /* Add margin-bottom for spacing */
+    }
+    .checkbox {
+      margin: 20px 0; /* Adjusted for better spacing */
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block; /* Make button block level for full width */
+      width: 100%; /* Ensure button takes the full container width */
+      box-sizing: border-box; /* Include padding and border in button's total width */
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #outputText {
+      width: 100%;
+      height: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f8f8f8;
+      font-family: monospace;
+      color: #333;
+    }
+  </style>
+  </head>
+  <body>
+  <div class="container">
+    <h2>Upload and Convert Config File</h2>
+    <div class="file-upload">
+      <input type="file" id="fileInput" />
+    </div>
+    <div class="checkbox">
+      <label><input type="checkbox" id="removeQuotes"> Remove Single Quotes</label>
+    </div>
+    <button onclick="convertFile()">Convert</button>
+  </div>
+  <div class="container">
+    <h2>Processed Output</h2>
+    <textarea id="outputText" readonly></textarea>
+    <button onclick="downloadFile()">Download</button>
+  </div>
+
+<script>
+function convertFile() {
+  const fileInput = document.getElementById('fileInput');
+  const removeQuotes = document.getElementById('removeQuotes').checked;
+  const outputText = document.getElementById('outputText');
+
+  if (!fileInput.files.length) {
+    alert("Please select a file first.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    let content = event.target.result;
+    content = content.replace(/\r\n/g, "\\r\\n").replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+    if (removeQuotes) {
+      content = content.replace(/'/g, "");
+    }
+    outputText.value = content;
+  };
+  reader.readAsText(fileInput.files[0]);
+}
+
+function downloadFile() {
+  const text = document.getElementById('outputText').value;
+  if (!text) {
+    alert("No content to download. Please convert a file first.");
+    return;
+  }
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'converted.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
